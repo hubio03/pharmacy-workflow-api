@@ -1,5 +1,8 @@
 # 약제부 처방 검수·조제 워크플로우 API
 
+![CI](https://github.com/hubio03/pharmacy-workflow-api/actions/workflows/ci.yml/badge.svg)
+
+
 병원 약제부의 **처방 접수 → 자동 검수 → 약사 승인 → 조제 → 불출** 흐름을 관리하는 백엔드 API입니다.
 C# / ASP.NET Core로 만들었고, 모든 개발·테스트·실행을 Docker 컨테이너 안에서 합니다.
 

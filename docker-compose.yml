@@ -1,0 +1,47 @@
+services:
+  # 배포용에 가까운 이미지로 실행: docker compose up --build api
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - pharmacy-data:/data          # SQLite 파일 보존 (컨테이너를 지워도 유지됨)
+    environment:
+      # 운영에서는 반드시 JWT_KEY 환경 변수(또는 .env 파일)로 직접 만든 긴 비밀 값을 지정하세요.
+      - Jwt__Key=${JWT_KEY:-dev-only-key-change-me-0123456789abcdef}
+
+  # 개발용(소스 변경 시 자동 재시작): docker compose up api-dev
+  api-dev:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    working_dir: /app
+    command: dotnet watch --non-interactive run --project src/PharmacyWorkflow.Api
+    volumes:
+      - .:/app
+      - nuget-cache:/root/.nuget/packages
+      - pharmacy-data:/data
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://0.0.0.0:8080
+      - ConnectionStrings__Default=Data Source=/data/pharmacy.db
+      - Jwt__Key=${JWT_KEY:-dev-only-key-change-me-0123456789abcdef}
+      - DOTNET_USE_POLLING_FILE_WATCHER=1
+      - DOTNET_NOLOGO=1
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+  # dotnet CLI 실행용: docker compose run --rm dotnet dotnet test
+  dotnet:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    working_dir: /app
+    profiles: ["tools"]
+    volumes:
+      - .:/app
+      - nuget-cache:/root/.nuget/packages
+    environment:
+      - DOTNET_NOLOGO=1
+      - DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+volumes:
+  nuget-cache:
+  pharmacy-data:

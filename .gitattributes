@@ -1,0 +1,10 @@
+# 줄바꿈을 저장소에서는 LF로 통일합니다. (Windows에서 커밋해도 경고만 나오고 문제 없습니다.)
+* text=auto
+
+# 컨테이너 안에서 실행되는 파일은 항상 LF
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Windows PowerShell 스크립트는 CRLF
+*.ps1 text eol=crlf
